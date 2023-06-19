@@ -1534,3 +1534,64 @@ Here is an example ad request:
 	“plcmt”: “4” 
 	}
 
+# 7.11 - Signaling Podcast Inventory
+
+As the Podcast Industry continues to grow and mature, it is important for the industry to adhere to advertising and content guidelines successfully established in other channels. This guide serves as a tool to consolidate and highlight a clear way to pass the most important signals available today in podcasting through programmatic channels. 
+ 
+While IAB advises that all partners participating in the programmatic buying and selling of podcast inventory should pass all prescribed information below, this is first and foremost a technical guideline built to outline process, and does not supersede individual business relationships established by buyers and sellers. It does, however, fully define how data should be sent.
+
+In the tables below, an added column for “Value” is used to define the expected information in the listed field for podcast inventory. This is additional information beyond the description of the field provided formally in OpenRTB and helps to reduce ambiguity about how to use the field to signal podcast inventory.
+
+## 7.11.1 Identity Signals in the Device Object
+Programmatic advertising is an operational tool built to simplify the process of buying and selling inventory. To accomplish that simplicity, it is important not only to provide as many data signals as possible for a medium, but also to pass them predictably in the prescribed parameters.
+ 
+Identity signals enable all sides of programmatic advertising to augment data, providing a unique value proposition to their clients. Some channels offer additional ID types, such as cookie IDs, device IDs, and other proprietary solutions as a match point. To supplement for these ID’s, podcast ad servers or SSPs should pass a consistent synthetic ID composed of a hashed IP address and Device User Agent to provide a probabilistic alternative for buyers looking for this type of anchor.
+ 
+The IAB recommends passing the following values as identified in the OpenRTB spec:
+
+### Object: Device
+|**Field**  |**Value**      |**Type**|**Description**         |
+|:------|:----------|:------------|:------------------------------------------------------------------|
+|ua |User agent |string |A raw user agent string from the browser. See ua field under device object for more details.|
+|sau|User agent|object|Structured user agent as an object detailing device make, model, app, version etc.|
+|ip|Ip address|string|IPv4 address closest to device.|
+|ifa|Device ID|string|For podcast specifically, SSPs should fill in using a persistent synthetic ID.|
+
+### Signaling ifa_type in the Device Object
+The identifier for advertisers (ifa) type is often signaled in OpenRTB requests, but a field for this value never existed. It defines the platform for which the ifa is provided, such as for Apple, Roku, or Android. However, the ifa type can be inferred when you know the id is device provided. To signal ifa type, use [device.ext](https://github.com/ChrisBasis/openrtb/blob/master/extensions/community_extensions/ifa_type.md) with attribute ifa_type. 
+
+
+## 7.11.2 - Content Signals
+Providing clear identification of content is just as important as listener identification signals. Podcasting has a wealth of knowledge contained within episode, show, and genre that will empower robust analytics and activation opportunities by programmatic partners.
+ 
+These identifiers also serve to reconcile the sellers ads.txt, the confirmation of the sellers.json, and act as the foundation for Brand Safety and Suitability in podcasting, which is quickly becoming table stakes for advertising industry wide. 
+ 
+Note: Inventory that does not provide these values should be expected to be classified as “unverifiable” with the expectation that buyers are likely to de-prioritize. The passing of these signals from podcast channels will enable larger programmatic budgets from advertisers adhering to premium buying standards.
+
+### Object: Content
+
+|Field|Value|Type|Description|
+|:----|:----------|:----------|:----------------------------------------------------------------|
+|series|show name|string|Content title. Specifically for podcast inventory, use the show name.|
+|title|episode title|string|Content series. Specifically for podcast inventory, use the episode title.|
+|genre|category|array of string|Genre that best describes the content (e.g., true crime, comedy, etc.). IAB podcasts genre taxonomy preferred. |
+|len|duration|integer|length of content in seconds|
+|id|GUID|string|Unique ID identifying episode. For podcast inventory, use the GUID.|
+|url|RSS URL|string|Unique URL identifying show. For podcast inventory, use the RSS URL.|
+ 
+**Note:** for the above id and url fields, providing GUID and RSS URL are unique to podcast inventory to support signaling podcast inventory specifically.
+ 
+### Object: Audio
+Additionally, the following audio signals should be provided as part of identifying the content.
+
+|**Field**|**Value**|**Type**|**Description**|
+|:----|:----------|:----------|:------------------------------------------------------------------|
+|startdelay|ad position|integer|Indicates the start delay in seconds for pre-roll, mid-roll, or post-roll ad placements. Refer to List: [Start Delay Modes](https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/AdCOM%20v1.0%20FINAL.md#list--start-delay-modes-) in AdCOM 1.0. |
+|podid| |string|Unique identifier indicating that an impression opportunity belongs to an audioad pod. If multiple impression opportunities within a bid request share the same podid, this indicates that those impression opportunities belong to the same audio ad pod.|
+
+
+## 7.11.3 - Updates and Feedback for Signaling Podcast Inventory
+Thank you for your attention to these important implementation guidelines for signaling podcast inventory. We are open to your feedback and suggestions that will help us achieve our above stated goals. For questions or comments on these implementation guidelines, please post an issue or email support@iabtechlab.com. 
+
+
+
