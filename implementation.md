@@ -1,9 +1,47 @@
 	
 # 7. Implementation Notes <a name="7implementationnotes"></a>
 	
-The following section will provide brief notes on how certain objects and fields are to be interpreted and implemented.
+The following section will provide brief notes on how certain objects and fields are to be interpreted and implemented.</br>
+
+[**7.1 No-Bid Signaling**](#nobidsignaling)</br>
+[**7.2 Impression Expiration**](#impressionexpiration)</br>
+[**7.3 PMP & Direct Deals**](#pmpdirectdeals)</br>
+[**7.4 Skippability**](#skippability)</br>
+[**7.5 Regs Resources**](#regsresources)</br>
+[**7.6 Pod Bidding for Video and Audio**](#podbidding)</br>
+[**7.7 Network vs Channel Example Cases**](#networkvschannel)</br>
+[**7.8 Counting Billable Events and Tracked Ads**](#countingbillableevents)</br>
+[**7.9 Digital Out-Of-Home**](#dooh)</br>
+&emsp;&emsp;[7.9.1 Multiple/Variable Impressions](#7-9-1)</br>
+&emsp;&emsp;[7.9.2 Unique Device Characterisitcs](#7-9-2)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.2.1 Highly Variable Physical Size](#7-9-2-1)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.2.2 Private Networks / Geo-Location Information](#7-9-2-2)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.2.3 Non-Persistent Connections / Longer-Than-Realtime Delays](#7-9-2-3)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.2.4 Proprietary Device Attributes](#7-9-2-4)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.2.5 Key Object Attributes To Use For DOOH Device Reference in OpenRTB](#7-9-2-5)</br>
+&emsp;&emsp;[7.9.3 Commercially Critical Ad Quality](#7-9-3)</br>
+&emsp;&emsp;[7.9.4 DOOH Pricing](#7-9-4)</br>
+&emsp;&emsp;[7.9.5 Auction Notifications](#7-9-5)</br>
+&emsp;&emsp;[7.9.6 - DOOH Example Scenarios](#7-9-6)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.6.1 - DOOH Banner Bid Request](#7-9-6-1)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.6.2 Banner Bid Response](#7-9-6-2)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.6.3 - DOOH Video Bid Request](#7-9-6-3)</br>
+&emsp;&emsp;&emsp;&emsp;[7.9.6.4 DOOH Video Bid Response ](#7-9-6-4)</br>
+[**7.10 Updated Video Signals**](#7-10)</br>
+&emsp;&emsp;[7.10.1 Examples](#7-10-1)</br>
+&emsp;&emsp;&emsp;&emsp;[7.10.1.1 Instream Video](#7-10-1)</br>
+&emsp;&emsp;&emsp;&emsp;[7.10.1.2 Accompanying Content](#7-10-1-2)</br>
+&emsp;&emsp;&emsp;&emsp;[7.10.1.3<strong> Interstitial](#7-10-1-3)</br>
+&emsp;&emsp;&emsp;&emsp;[7.10.1.4<strong> No Content/Standalone](#7-10-1-4)</br>
+&emsp;&emsp;&emsp;&emsp;[7.10.2 Using plcmt attribute in Object](#7-10-2)</br>
+[**7.11 Signaling Podcast Inventory** ](#7-11)</br>
+&emsp;&emsp;[7.11.1 Identity Signals in the Device Object](#7-11-1)</br>
+&emsp;&emsp;[7.11.2 Content Signals](#7-11-2)</br>
+&emsp;&emsp;[7.11.3 Updates and Feedback for Signaling Podcast Inventory](#7-11-3)</br></br>
+
+
 	
-## 7.1 - No-Bid Signaling <a name="nobadsignaling"></a>
+## 7.1 No-Bid Signaling <a name="nobidsignaling"></a>
 	
 This section covers best practices for using the optional no-bid signaling. See the [List: No-Bid Reason Codes](https://github.com/InteractiveAdvertisingBureau/openrtb/blob/master/OpenRTB%20v3.0%20FINAL.md#list--no-bid-reason-codes-) in OpenRTB 3.0 for the enumerated list of no-bid reason codes.
 	
@@ -25,14 +63,14 @@ Many exchanges support multiple response types as a no-bid:
 	
 An important issue in RTB is when impressions are triggered by software robots mimicking web browsers. Such robots may be implicitly or explicitly driving these false transactions. The following represents a set of symmetric best practices for exchanges and bidders to help recognize and reject these events.
 	
-*Responsibility of the exchange*
+### 7.1.1 Responsibility of the exchange <a name="7-1-1"></a>
 	
 Make best effort to classify and reject non-human traffic (NHT) requests for ads to the exchange via the following best practices:
 	
 - (Recommended) Filter impressions from known spiders via user-agent classification.
 - (Recommended) Filter impressions from suspected NHT via a “detector”.
 	
-*Responsibility of the bidder*
+### 7.1.2 Responsibility of the bidder <a name="7-1-2"></a>
 	
 - (Recommended) no-bid impressions from known spiders via user-agent classification.
 - (Recommended) no-bid impressions from suspected NHT via a “detector”.
@@ -44,7 +82,7 @@ Make best effort to classify and reject non-human traffic (NHT) requests for ads
 - For bidders, filtering the impression means that the bidder should respond with a no-bid.
 - For both exchanges and bidders, the impression transaction records should be clearly marked in any logging systems and be removed from contributing to any event counts associated with planning, forecasting, and reporting systems.
 	
-## 7.2 - Impression Expiration <a name="impressionexpiration"></a>
+## 7.2 Impression Expiration <a name="impressionexpiration"></a>
 	
 Recapping the typical impression flow through RTB, an ad will be requested by a client (e.g., web browser, mobile app or an SDK therein) possibly through other server intermediaries, and ultimately to the RTB exchange. The exchange conducts an auction among buyers who bid with a proposed price, possibly markup for use if the bid wins (markup can also be delivered on the win notice itself), and other metadata about the bid. The exchange then selects a winner, issues a win notice to the winning bidder, and passes the markup back to the client.
 	
@@ -76,7 +114,7 @@ The following expiration times are offered as examples of reasonable delays base
 		<td>Audio or video with server-side stitching</td><td>Very Long or Unknown</td></tr>
 	</table>
 	
-## 7.3 - PMP & Direct Deals <a name="pmpdirectdeals"></a>
+## 7.3 PMP & Direct Deals <a name="pmpdirectdeals"></a>
 	
 **Best Practice Bidding Logic** <a name="bestpracticebiddinglogic"></a>
 	
@@ -201,7 +239,7 @@ With Deal ID buyers are sellers are communicating directly. The Exchange and Bid
 - Same as Case-6.
 - Deal ID represents some combination of private first-party data from the Publisher.
 	
-## 7.4 - Skippability <a name="skippability"></a>
+## 7.4 Skippability <a name="skippability"></a>
 	
 This section clarifies the common use cases related to declaring skippability of video creatives.
 	
@@ -285,7 +323,7 @@ When responding to Case-3 with this skippable attribute specified in the bid, th
 	
 In Case-1 and Case-2 where the publisher may impose its own skippability, creative attribute 16 should not be specified. Furthermore, publishers are advised to filter responses containing attribute 16 since this could conflict with the skip button rendered by the publisher. When using a VAST 3.0 response, publishers may choose to implement support for VAST 3.0 `skipoffset` at their discretion and ads should be assumed to play non-skippable if the player does not support it.
 	
-## 7.5 - Regs Resources <a name="regsresources"></a>
+## 7.5 Regs Resources <a name="regsresources"></a>
 	
 The regs object contains any legal, governmental, or industry regulations that the sender deem applicable to the request.
 	
@@ -297,7 +335,7 @@ Please see the below resources for more details and framework specifications sho
 **<a href="https://github.com/InteractiveAdvertisingBureau/USPrivacy">CCPA (California Consumer Privacy Act)</a>**
 
 
-## 7.6 - Pod Bidding for Video and Audio <a name="podbidding"></a>
+## 7.6 Pod Bidding for Video and Audio <a name="podbidding"></a>
 	
 Starting in version 2.6, OpenRTB now supports ‘pod bidding’ for video and audio content streams.
 An ad pod is the term describing an ad break of the type you’d see in a TV-like viewing experience or hear on a radio stream. An ad pod typically contains one or more in-stream creative assets that play out contiguously within a stream of video or audio content. Ad podding features in OpenRTB 2.6 build on capabilities in previous versions for including multiple ad requests within a single bid request object to indicate those ad requests are in some way related. Pod bidding signals communicate additional information about the pod & impression opportunities within the pod such as the sequence of the ad impressions, total pod length, maximum # of ads within a pod, multiple pod associations, and more.
@@ -567,19 +605,12 @@ BidResponse
 				"advertiserB.com" 
 	
 			], 
-	
 			"cid": "567890", 
-	
 			"crid": "234567", 
-	
 			"dur": 15 
-	
 		}], 
-	
 		"seat": "2" 
-	
 	} 
-	
 	], "cur": "USD" }
 	
 ```
@@ -975,7 +1006,7 @@ BidResponse
 
 	
 	
-## 7.7 - Network vs Channel Example Cases <a name="networkvschannel"></a>
+## 7.7 Network vs Channel Example Cases <a name="networkvschannel"></a>
 	
 Starting in version 2.6, OpenRTB now supports Network and Channel objects. See <a href="https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectnetwork">3.2.23</a> and <a href="https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3224---object-channel-">3.2.24</a> for details).While these examples are straight forward for traditional linear television, the options for CTV consumption warrant a few examples.
 	
@@ -1001,7 +1032,7 @@ Starting in version 2.6, OpenRTB now supports Network and Channel objects. See <
 - Pluto is the network (also identified by `bundle`)
 - PlutoTV Spotlight is the channel
 	
-## 7.8 - Counting Billable Events and Tracked Ads <a name="countingbillableevents"></a>
+## 7.8 Counting Billable Events and Tracked Ads <a name="countingbillableevents"></a>
 	
 There are multiple conventions for how to count billable events or tracked ads via OpenRTB, typically an impression or other such common metric. This section outlines the common ones, addresses common mistakes, and offers a comparison of the approaches.
 	
@@ -1108,11 +1139,11 @@ These HTTP headers allow recipients of impression notifications to run anti-IVT 
 **BEST PRACTICE**: When firing impression notifications via HTTP request from the server-side, the notifier should establish an [ads.cert Call Sign](https://iabtechlab.com/wp-content/uploads/2021/09/2-ads-cert-call-signs-pc.pdf) and make use of the [ads.cert Authenticated Connections protocol](https://iabtechlab.com/wp-content/uploads/2021/09/3-ads-cert-authenticated-connections-pc.pdf) to cryptographically sign notifications. This allows recipients of impression notifications, who’ve established ads.cert Call Signs of their own, to authenticate the sender for anti-fraud purposes.
 	
 
-## 7.9 - Digital Out-Of-Home <a name="dooh"></a>
+## 7.9 Digital Out-Of-Home <a name="dooh"></a>
 
 This section details the unique differences between trading the online world of digital display and real-world aspects of Digital Out-Of-Home (DOOH) media. Each sub section references the key objects that enable DOOH to be traded using the OpenRTB standard.
 	
-### 7.9.1 -  Multiple/Variable Impressions
+### 7.9.1 Multiple/Variable Impressions <a name="7-9-1"></a>
 The OpenRTB trading method was built around the assumption that a targeted user holds one device and is served an ad as they visit a webpage e.g. One impression = One user.
 OOH Media is a medium where one advert play (a spot) is viewable by everyone who is in the vicinity of the advert being displayed e.g. One ad display = multiple viewers/users (this number can be both greater than *or* less than 1 - due to numbers being based on statistical modeling, fractional values (e.g. .32 impressions per ad display) are common. These rates are also variable as they may be based on hourly-adjusted projections, or real-time sensor data.
 
@@ -1120,9 +1151,9 @@ Multiplying by decimal values (especially with a CPM) can lead to discrepancies 
 	
 The OpenRTB imp object now includes a qty object that enables the multiplier dimension
 
-### 7.9.2 Unique Device Characterisitcs
+### 7.9.2 Unique Device Characterisitcs <a name="7-9-2"></a>
 	
-#### 7.9.2.1 Highly Variable Physical Size
+#### 7.9.2.1 Highly Variable Physical Size <a name="7-9-2-1"></a>
 The majority of devices that are served ads via OpenRTB are of a size that one person can hold or lean into. In OOH media the advert can be traded and served on anything from the size of a shelf edge label to the size of multiple football pitches. This far exceeds the size range of anything that can be held in the viewer's hand or hung on their living room wall.
 
 The size and direction of an OOH display not only affects the size of the audience that could see it, but also changes the chances of the audience that will see the advertisement being served.
@@ -1130,7 +1161,7 @@ The size and direction of an OOH display not only affects the size of the audien
 A common trait with both OOH and  digital display ads is that there are a wide variety of sizes, resolutions and aspect ratios to be accommodated as the physical displays ‘build into’ physical spaces vary, and may contain additional content (e.g. tickers, application, labels) that cause ad slot sizes to vary.
 	
 
-#### 7.9.2.2 Private Networks / Geo-Location Information
+#### 7.9.2.2 Private Networks / Geo-Location Information <a name="7-9-2-2"></a>
 The majority of commercial DOOH digital displays sit on ‘walled garden’ private ip networks. This protects the displays from a wide spectrum of internet security issues, vulnerabilities and attacks.
 
 This can lead to 3rd party ad serving, cookies and http event logging service being constricted by the ‘safe-lists’ of urls allowed through the ‘walled garden’ security. 
@@ -1139,21 +1170,21 @@ Many Media Owners / Publishers therefore publish proprietary ‘1st Party’ pla
 
 The use of private ip networks also means that DSPs are not able to use their normal IP address geolocation techniques to get information about where ads are delivered - though publisher-reported locations (e.g. lat/lon, geo information like address, zip, region) are almost always available. In the case of moving media (e.g. taxi-top displays, bus panels, etc.) near-real time GPS-derived information is common.
 
-#### 7.9.2.3 Non-Persistent Connections / Longer-Than-Realtime Delays
+#### 7.9.2.3 Non-Persistent Connections / Longer-Than-Realtime Delays <a name="7-9-2-3"></a>
 Most DOOH display panels in urban and remote connections rely on cellular networks for their network connectivity. Whilst a Media Owner may have their own private network with a telecoms provider, the network is still at the mercy of congestion on the local cell tower. Over subscription to cell towers at peak times and locations leads to the DOOH display panels having non-persistent internet connection. 
 
 To mitigate this, some DOOH Media Owners and/or publishers employ ‘forward and store’  technology and give a lead time tolerance from bid request to display. Bids may be requested in advance (to allow pre-buffering or populate “playlists'' on devices, and the confirmation of playback may be delayed due to log collection or processing within publisher systems 
 
 The current industry accepted lead time from ‘bid confirmation’ to ‘display’ can be up to 1 to 2 hours.
 
-#### 7.9.2.4 Proprietary Device Attributes
+#### 7.9.2.4 Proprietary Device Attributes <a name="7-9-2-4"></a>
 Unlike the TV, Tablet and Mobile phone market, there are no dominant global brands supplying digital OOH screen technology to the market. Media Owners and/or Publishers source their own screen technology from a wide variety of manufacturers, technologies and installation partners resulting in each network having its own proprietary device types,identifiers, and other attributes such as user agent strings.
 
 Some countries have attempted to create standards for describing the shape, size and format of the digital units, but to date there is no recognised global standard for identifying a digital out of home device or the users who it may reach.
 
 In the case of user agents, oftentimes non-standard strings are used by Media Owners, which has been known to plague device detection and traffic protection systems. It is advised that Media Owners comply with the HTTP user agent standards set forth by the IETF and submit their user agents to the IAB Spiders and Bots List using the "Submit here" button on this page.
 
-#### 7.9.2.5 Key Object Attributes To Use For DOOH Device Reference in OpenRTB
+#### 7.9.2.5 Key Object Attributes To Use For DOOH Device Reference in OpenRTB <a name="7-9-2-5"></a>
 Key objects such as imp.qty and dooh have been added to the OpenRTB specification to enable the programmatic trading of the medium. The following table gives guidance to the use of more common OpenRTB object references when transacting DOOH bids.
 
 | Object Reference        | Type                | Implementation Guidance                                                                                                                                                                                                                   |
@@ -1167,7 +1198,7 @@ Key objects such as imp.qty and dooh have been added to the OpenRTB specificatio
 | imp.video.boxingallowed | integer             | For DOOH, when boxingallowed = 0, the video aspect ratio should strictly match that of the placement, as determined by the video w and h fields.                                                                                          |
 | imp.dt                  | float               | Timestamp when the item is estimated to be fulfilled (e.g. when a DOOH impression will be displayed) in Unix format (i.e., milliseconds since the epoch).                                                                                 |
                                                                                                              
-### 7.9.3 Commercially Critical Ad Quality
+### 7.9.3 Commercially Critical Ad Quality <a name="7-9-3"></a>
 One bad advert being served at one time to one person is survivable. 
 One bad advert served at one time to 1000’s of people in a public place will lead to a Media Owner and/or Publisher risking their contract/permission to serve ads to networks of screens. 
 
@@ -1178,7 +1209,7 @@ This means typical lead times for creative approval are on the order of “worki
 For the above reasons, use of IAB Ad Management API (https://github.com/InteractiveAdvertisingBureau/AdManagementAPI/blob/master/Ad%20Management%20API%201.0%20FINAL.md) for creative submission to DOOH exchanges is strongly recommended, though many SSPs may have proprietary extensions to allow submitting ads to specific individual publishers.
 
 
-### 7.9.4 DOOH Pricing
+### 7.9.4 DOOH Pricing <a name="7-9-4"></a>
 Bid price and clearing price should be expressed as a CPM rate per impression.  
 For example, if an advertiser is bidding $2.50 CPM on a 1st price auction, and the auction is for 30.3 impressions:
 multiplier = 30.3 (Impression multiplier from bid request)
@@ -1195,15 +1226,15 @@ To calculate the total cost of the transaction:
 The above auction would translate to an invoice of $0.07575.
 
 	
-### 7.9.5 Auction Notifications
+### 7.9.5 Auction Notifications <a name="7-9-5"></a>
 In DOOH, there can be significant delay between winning an auction, and the creative actually being rendered. For this reason, it is strongly recommended to separate the win and billing events, following OpenRTB best practises:
 - nurl - Auction event notification URL fired when a bid has won the auction. Not a guarantee that impressions will occur.
 - burl - Auction event billing URL fired when the creative has rendered on screen and impression[s] are billable.
 
 	
-### 7.9.6 - DOOH Example Scenarios
+### 7.9.6 - DOOH Example Scenarios <a name="7-9-6"></a>
 
-#### 7.9.6.1 - DOOH Banner Bid Request
+#### 7.9.6.1 - DOOH Banner Bid Request <a name="7-9-6-1"></a>
 
 ```javascript
 {
@@ -1306,7 +1337,7 @@ In DOOH, there can be significant delay between winning an auction, and the crea
 }
 ```
 
-#### 7.9.6.2 - Banner Bid Response
+#### 7.9.6.2 Banner Bid Response <a name="7-9-6-2"></a>
 
 ```javascript
 {
@@ -1352,7 +1383,7 @@ In DOOH, there can be significant delay between winning an auction, and the crea
 }
 ```
 
-#### 7.9.6.3 - DOOH Video Bid Request
+#### 7.9.6.3 - DOOH Video Bid Request <a name="7-9-6-3"></a>
 
 ```javascript
 {
@@ -1438,7 +1469,7 @@ In DOOH, there can be significant delay between winning an auction, and the crea
 }
 ```
 
-#### 7.9.6.4 - DOOH Video Bid Response
+#### 7.9.6.4 DOOH Video Bid Response  <a name="7-9-6-4"></a>
 
 ```javascript
 {
@@ -1483,30 +1514,30 @@ In DOOH, there can be significant delay between winning an auction, and the crea
 }
 ```
 
-## 7.10 - Updated Video Signals
-#### 7.10.1 - Examples 
-#### 7.10.1.1<strong> Instream Video:</strong>
+## 7.10 Updated Video Signals <a name="7-10"></a>
+#### 7.10.1 - Examples <a name="7-10-1"></a>
+#### 7.10.1.1<strong> Instream Video:</strong>  <a name="7-10-1"></a>
 Pre-roll, mid-roll, and post-roll ads that are played before, during or after the streaming video content that the consumer has requested. Instream video must be set to “sound on” by default at player start, or have explicitly clear user intent to watch the video content. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view capable of audio when playing. If the player converts to floating/sticky subsequent ad calls should accurately convey the updated player size.
 	
 ![](https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/assets/Instream.gif)
 	
-#### 7.10.1.2<strong> Accompanying Content:</strong>
+#### 7.10.1.2<strong> Accompanying Content:</strong>  <a name="7-10-1-2"></a>
 Pre-roll, mid-roll, and post-roll ads that are played before, during, or after streaming video content. The video player loads and plays before, between, or after paragraphs of text or graphical content, and starts playing only when it enters the viewport. Accompanying content should only start playback upon entering the viewport. It may convert to a floating/sticky player as it scrolls off the page.
 
 ![](https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/assets/Accompanying%20Content.gif)
 
-#### 7.10.1.3<strong> Interstitial: </strong>
+#### 7.10.1.3<strong> Interstitial: </strong>  <a name="7-10-1-3"></a>
 Video ads that are played without video content. During playback, it must be the primary focus of the page and take up the majority of the viewport and cannot be scrolled out of view. This can be in placements like in-app video or slideshows.
 
 Example file coming soon!
 
-#### 7.10.1.4<strong> No Content/Standalone: </strong> 
+#### 7.10.1.4<strong> No Content/Standalone: </strong>  <a name="7-10-1-4"></a>
 Video ads that are played without streaming video content. This can be in placements like slideshows, native feeds, in-content or sticky/floating.
 
 ![](https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/assets/No%20Content_Standalone%20-%20Slideshow.gif)
 
 
-#### 7.10.2 - Using plcmt attribute in Object: Video
+#### 7.10.2 Using plcmt attribute in Object: Video  <a name="7-10-2"></a>
 
 The release of updated definitions in AdCOM List: Plcmt Subtypes – Video and a new attribute (<code>plcmt</code> in <a href="https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/develop/2.6.md#327---object-video-">Object: Video</a>) to give publishers a way to signal video inventory in a way that more closely aligns with the updated ad format guidelines without breaking existing workstreams. 
 
@@ -1534,314 +1565,66 @@ Here is an example ad request:
 	“plcmt”: “4” 
 	}
 
-<!-----
-
-You have some errors, warnings, or alerts. If you are using reckless mode, turn it off to see inline alerts.
-* ERRORs: 0
-* WARNINGs: 0
-* ALERTS: 1
-
-Conversion time: 0.907 seconds.
-
-
-Using this Markdown file:
-
-1. Paste this output into your source file.
-2. See the notes and action items below regarding this conversion run.
-3. Check the rendered output (headings, lists, code blocks, tables) for proper
-   formatting and use a linkchecker before you publish this page.
-
-Conversion notes:
-
-* Docs to Markdown version 1.0β34
-* Fri Jun 30 2023 07:52:01 GMT-0700 (PDT)
-* Source doc: Programmatic Signaling for Podcast Inventory
-* Tables are currently converted to HTML tables.
-* This document has images: check for >>>>>  gd2md-html alert:  inline image link in generated source and store images to your server. NOTE: Images in exported zip file from Google Docs may not appear in  the same order as they do in your doc. Please check the images!
-
-
-WARNING:
-You have 2 H1 headings. You may want to use the "H1 -> H2" option to demote all headings by one level.
-
------>
-
-
-<p style="color: red; font-weight: bold">>>>>>  gd2md-html alert:  ERRORs: 0; WARNINGs: 1; ALERTS: 1.</p>
-<ul style="color: red; font-weight: bold"><li>See top comment block for details on ERRORs and WARNINGs. <li>In the converted Markdown or HTML, search for inline alerts that start with >>>>>  gd2md-html alert:  for specific instances that need correction.</ul>
-
-<p style="color: red; font-weight: bold">Links to alert messages:</p><a href="#gdcalert1">alert1</a>
-
-<p style="color: red; font-weight: bold">>>>>> PLEASE check and correct alert issues and delete this message and the inline alerts.<hr></p>
-
-
-
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image1.png "image_tooltip")
-
-
-
-# Podcast Implementation Guidelines 
-
-
-# for OpenRTB v2.x
-
-**Note to reviewers: **the following text is being proposed for addition to the [OpenRTB 2.x Implementation Notes](https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/implementation.md) under a new subsection for 7.11.
-
- 
-
-
-## 7.11 Signaling Podcast Inventory
-
+## 7.11 Signaling Podcast Inventory  <a name="7-11"></a>
 As the Podcast Industry continues to grow and mature, it is important for the industry to adhere to advertising and content guidelines successfully established in other channels. This guide serves as a tool to consolidate and highlight a clear way to pass the most important signals available today in podcasting through programmatic channels. 
 
- 
-
-While IAB Tech Lab advises that all partners participating in the programmatic buying and selling of podcast inventory should pass all prescribed information below, this is first and foremost a technical guideline built to outline process, and does not supersede individual business relationships established by buyers and sellers. It does, however, fully define how data should be sent.
+While IAB Tech Lab advises that all partners participating in the programmatic buying and selling of podcast inventory should pass all prescribed information below, this is first and foremost a technical guideline built to outline process and does not supersede individual business relationships established by buyers and sellers. It does, however, fully define how data should be sent.
 
 In the tables below, an added column for “Value” is used to define the expected information in the listed field for podcast inventory. This is additional information beyond the description of the field provided formally in OpenRTB and helps to reduce ambiguity about how to use the field to signal podcast inventory.
 
 
-### 7.11.1 Identity Signals in the Device Object
-
+### 7.11.1 Identity Signals in the Device Object <a name="7-11-1"></a>
 Programmatic advertising is an operational tool built to simplify the process of buying and selling inventory. To accomplish that simplicity, it is important not only to provide as many data signals as possible for a medium, but also to pass them predictably in the prescribed parameters.
-
- 
 
 Identity signals enable all sides of programmatic advertising to augment data, providing a unique value proposition to their clients. Some channels offer additional ID types, such as cookie IDs, device IDs, and other proprietary solutions as a match point. To supplement for these ID’s, podcast ad servers or SSPs should pass a consistent synthetic ID composed of a hashed IP address and Device User Agent to provide a probabilistic alternative for buyers looking for this type of anchor.
 
- 
-
 The IAB Tech Lab recommends passing the following values as identified in the OpenRTB spec:
 
-
-<table>
-  <tr>
-   <td colspan="2" >Object: Device
-   </td>
-   <td>
-   </td>
-   <td colspan="2" >
-   </td>
-   <td> 
-   </td>
-  </tr>
-  <tr>
-   <td>Field
-   </td>
-   <td colspan="2" >Value
-   </td>
-   <td>Type
-   </td>
-   <td colspan="2" >Description
-   </td>
-  </tr>
-  <tr>
-   <td>ua
-   </td>
-   <td colspan="2" >User agent
-   </td>
-   <td>string
-   </td>
-   <td colspan="2" >A raw user agent string from the browser. See ua field under<a href="https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3218---object-device-"> device object</a> for more details.
-   </td>
-  </tr>
-  <tr>
-   <td>sau
-   </td>
-   <td colspan="2" >User agent
-   </td>
-   <td>object
-   </td>
-   <td colspan="2" >Structured user agent as an object detailing device make, model, app, version etc.
-   </td>
-  </tr>
-  <tr>
-   <td>ip
-   </td>
-   <td colspan="2" >Ip address
-   </td>
-   <td>string
-   </td>
-   <td colspan="2" >IPv4 address closest to device.
-   </td>
-  </tr>
-  <tr>
-   <td>ifa
-   </td>
-   <td colspan="2" >Device ID
-   </td>
-   <td>string
-   </td>
-   <td colspan="2" >For podcast specifically, SSPs should fill in using a persistent synthetic ID.
-   </td>
-  </tr>
-</table>
+#### Object: Device
+|**Field**  |**Value**      |**Type**|**Description**         |
+|:------|:----------|:------------|:------------------------------------------------------------------|
+|ua |User agent |string |A raw user agent string from the browser. See ua field under [device object](https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3218---object-device-) for more details. |
+|sau|User agent|object|Structured user agent as an object detailing device make, model, app, version etc.|
+|ip|Ip address|string|IPv4 address closest to device.|
+|ifa|Device ID|string|For podcast specifically, SSPs should fill in using a persistent synthetic ID.|
 
 
-
-### 7.11.2 Signaling ifa_type in the Device Object
-
+#### Signaling ifa_type in the Device Object
 The identifier for advertisers (ifa) type is signaled in OpenRTB using [device.ext](https://github.com/ChrisBasis/openrtb/blob/master/extensions/community_extensions/ifa_type.md) to indicate the source of the id (i.e. device, publisher, SSP, or session-based). It does not enumerate platform specific ids (e.g. Roku, Apple, or Android). When the ifa_type is provided by the device (device.ext.ifa_type=dpid), the platform can and should be inferred based on other signals within OpenRTB.
 
 
-### 7.11.3 Supply Chain Validation
-
+#### Supply Chain Validation
 Please refer to PLACEHOLDER FOR ADS.TXT GUIDANCE for information on ways to reconcile the sellers ads.txt, the confirmation of the sellers.json, and act as the foundation for Brand Safety and Suitability in podcasting, which is quickly becoming table stakes for advertising industry wide. 
-
- 
 
 Note: Inventory that does not provide these values should be expected to be classified as “unverifiable” with the expectation that buyers are likely to de-prioritize. The passing of these signals from podcast channels will enable larger programmatic budgets from advertisers adhering to premium buying standards.
 
 
-### 7.11.4 Content Signals
-
+### 7.11.2 Content Signals <a name="7-11-2"></a>
 Providing clear identification of content is just as important as listener identification signals. Podcasting has a wealth of knowledge contained within episode, show, and genre that will empower robust analytics and activation opportunities by programmatic partners.
 
- 
-
- 
-
-
-<table>
-  <tr>
-   <td colspan="2" >Object: Content
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>Field
-   </td>
-   <td>Value
-   </td>
-   <td>Type
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>series
-   </td>
-   <td>show name
-   </td>
-   <td>string
-   </td>
-   <td>Content title.
-   </td>
-  </tr>
-  <tr>
-   <td>title
-   </td>
-   <td>episode title
-   </td>
-   <td>string
-   </td>
-   <td>Content series.
-   </td>
-  </tr>
-  <tr>
-   <td>genre
-   </td>
-   <td>category
-   </td>
-   <td>array of string
-   </td>
-   <td>Genre that best describes the content (e.g., true crime, comedy, etc.). IAB podcasts genre taxonomy preferred. 
-   </td>
-  </tr>
-  <tr>
-   <td>len
-   </td>
-   <td>duration
-   </td>
-   <td>integer
-   </td>
-   <td>length of content in seconds
-   </td>
-  </tr>
-  <tr>
-   <td>id
-   </td>
-   <td>GUID
-   </td>
-   <td>string
-   </td>
-   <td>Unique ID identifying episode
-   </td>
-  </tr>
-  <tr>
-   <td>url
-   </td>
-   <td>RSS URL
-   </td>
-   <td>string
-   </td>
-   <td>Unique URL identifying show
-   </td>
-  </tr>
-</table>
-
-
- 
+#### Object: Content
+|Field|Value|Type|Description|
+|:----|:----------|:----------|:----------------------------------------------------------------|
+|series|show name|string|Content title. Specifically for podcast inventory, use the show name.|
+|title|episode title|string|Content series. Specifically for podcast inventory, use the episode title.|
+|genre|category|array of string|Genre that best describes the content (e.g., true crime, comedy, etc.). IAB podcasts genre taxonomy preferred. |
+|len|duration|integer|length of content in seconds|
+|id|GUID|string|Unique ID identifying episode. For podcast inventory, use the GUID.|
+|url|RSS URL|string|Unique URL identifying show. For podcast inventory, use the RSS URL.|
 
 Note: for the above id and url fields, providing GUID and RSS URL are unique to podcast inventory to support signaling podcast inventory specifically.
 
+#### Object: Audio
+Additionally, the following audio signals should be provided as part of identifying the content.
 
-### Audio Signals
+|**Field**|**Value**|**Type**|**Description**|
+|:----|:----------|:----------|:------------------------------------------------------------------|
+|startdelay|ad position|integer|Indicates the start delay in seconds for pre-roll, mid-roll, or post-roll ad placements. Refer to List: [Start Delay Modes](https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/AdCOM%20v1.0%20FINAL.md#list--start-delay-modes-) in AdCOM 1.0. |
+|podid| |string|Unique identifier indicating that an impression opportunity belongs to an audioad pod. If multiple impression opportunities within a bid request share the same podid, this indicates that those impression opportunities belong to the same audio ad pod.|
 
-Additionally, the following audio signals should be provided as part of identifying the content..
 
- 
-
-
-<table>
-  <tr>
-   <td colspan="2" >Object: Audio
-   </td>
-   <td>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>Field
-   </td>
-   <td>Value
-   </td>
-   <td>Type
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>startdelay
-   </td>
-   <td>ad position
-   </td>
-   <td>integer
-   </td>
-   <td>Indicates the start delay in seconds for pre-roll, mid-roll, or post-roll ad placements. Refer to List: <a href="https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/AdCOM%20v1.0%20FINAL.md#list--start-delay-modes-">Start Delay Modes</a> in AdCOM 1.0.
-   </td>
-  </tr>
-  <tr>
-   <td>podid
-   </td>
-   <td>
-   </td>
-   <td>string
-   </td>
-   <td>Unique identifier indicating that an impression opportunity belongs to an audioad pod. If multiple impression opportunities within a bid request share the same podid, this indicates that those impression opportunities belong to the same audio ad pod.
-   </td>
-  </tr>
-</table>
+## 7.11.3 Updates and Feedback for Signaling Podcast Inventory <a name="7-11-3"></a>
+Thank you for your attention to these important implementation guidelines for signaling podcast inventory. We are open to your feedback and suggestions that will help us achieve above stated goals. For questions or comments on these implementation guidelines, please post an issue or email <a href="mailto:support@iabtechlab.com?subject=<oRTB Implementation: Podcast Signaling>>support@iabtechlab.com</a>.
 
 
 
-### Updates and Feedback
-
-Thank you for your attention to these important implementation guidelines for signaling podcast inventory. We are open to your feedback and suggestions that will help us achieve our above stated goals. For questions or comments on these implementation guidelines, please post an issue or email [support@iabtechlab.com](mailto:support@iabtechlab.com). 
